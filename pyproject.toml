@@ -1,0 +1,27 @@
+[project]
+name = "safe-rl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Natashumushi", email = "60249144+Natashumushi@users.noreply.github.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "bluesky-gym>=0.2.0",
+    "cbfkit",
+    "jax>=0.10.2",
+    "matplotlib>=3.11.2",
+    "pytest>=9.1.1",
+    "stable-baselines3>=2.9.0",
+]
+
+[project.scripts]
+safe-rl = "safe_rl:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+cbfkit = { git = "https://github.com/bardhh/cbfkit" }
