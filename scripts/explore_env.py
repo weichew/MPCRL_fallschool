@@ -69,10 +69,34 @@ s0 = env.read_state()
 # print(s0["lat"], s0["hdg"])
 lat0 = s0["lat"][0]
 lon0 = s0["lon"][0]
-print("aircraft:", latlon_to_xy(lat0, lon0, lat0, lon0))
-wlat = s0["wpt_lat"][0]
-wlon = s0["wpt_lon"][0]
-qx, qy = latlon_to_xy(wlat, wlon, lat0, lon0)
-test = np.sqrt(qx**2 + qy**2)
-bluesky_km = qdrdist(lat0, lon0, wlat, wlon)[1] * 1.852
-print("test:", test, "bluesky:", bluesky_km)
+# print("aircraft:", latlon_to_xy(lat0, lon0, lat0, lon0))
+# wlat = s0["wpt_lat"][0]
+# wlon = s0["wpt_lon"][0]
+# qx, qy = latlon_to_xy(wlat, wlon, lat0, lon0)
+# test = np.sqrt(qx**2 + qy**2)
+# bluesky_km = qdrdist(lat0, lon0, wlat, wlon)[1] * 1.852
+# print("test:", test, "bluesky:", bluesky_km)
+import jax.numpy as jnp
+from safe_rl.geometry import build_obstacles
+from safe_rl.barrier.obstacle import obstacle_barrier
+
+N, b, J = build_obstacles(s0["polygons"], lat0, lon0)
+
+# # Test A: the aircraft (q = 0) is outside every polygon
+# h_air = obstacle_barrier(jnp.zeros(2), N, b, J, kappa=2.0, r=0.5)
+# exact = min((-b[m, :J[m]]).max() for m in range(len(J)))   # true min over polygons of max over edges
+# print("aircraft:", h_air, "exact:", exact)
+
+# # Test B: the centre of polygon 0 is inside it
+# corners = np.array(s0["polygons"][0])
+# cx, cy = latlon_to_xy(corners[:, 0].mean(), corners[:, 1].mean(), lat0, lon0)
+# h_in = obstacle_barrier(jnp.array([cx, cy]), N, b, J, kappa=1.0, r=0.0)
+# print("inside polygon 0:", h_in)
+
+from safe_rl.barrier.turning_circle import circle_values, turning_circle_barrier
+from safe_rl.geometry import hdg_to_psi
+
+x0 = jnp.array([0.0, 0.0, hdg_to_psi(s0["hdg"][0])])   # aircraft at origin, its heading
+v = s0["tas"][0] / 1000                                 # m/s -> km/s
+print(circle_values(x0, N, b, J, v, 0.029, 2.0, 0.5))
+print(turning_circle_barrier(x0, N, b, J, v, 0.029, 2.0, 0.5, 2.0))

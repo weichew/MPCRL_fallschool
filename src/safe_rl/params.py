@@ -9,15 +9,15 @@ class Params:
     max_decisions: int = 200     # decisions per episode before truncation
 
     # --- Aircraft ---
-    omega_max: float | None = None   # rad/s, largest turn rate (omega_max). TODO: from BlueSky's turn model
-    # speed v is read from bs.traf.tas at reset, did bluesky use fuel optimal speed when it is constant?
+    omega_max: float = 0.029   # rad/s, largest turn rate (omega_max).  from BlueSky's turn model  
+    # speed v is read from bs.traf.tas at reset TODO: change to variable when speed is not constant
 
     # --- Obstacles ---
-    r: float | None = None       # km, safety margin around each polygon (r). TODO
-    kappa: float | None = None   # 1/km, smoothing of the union and intersection (kappa). TODO
+    r: float = 0.5       # km, safety margin around each polygon (r).
+    kappa: float = 2   # 2/km, smoothing of the union and intersection (kappa). 
 
     # --- Turning circles ---
-    eta: float | None = None     # 1/km, smoothing of the union of B_L and B_R (eta). TODO
+    eta: float = 2     # 2/km, smoothing of the union of B_L and B_R (eta). TODO
 
     # --- Safety filter ---
     beta: float | None = None    # 1/s, barrier rate (beta). TODO
