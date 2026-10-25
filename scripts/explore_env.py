@@ -3,6 +3,8 @@ import bluesky_gym
 import random
 import numpy as np
 import bluesky as bs
+from safe_rl.geometry import latlon_to_xy
+from bluesky.tools.geo import qdrdist
 
 SEED = 0
 random.seed(SEED)
@@ -60,8 +62,17 @@ from safe_rl.rl.wrapper import SafeEnv
 env = SafeEnv(gym.make("StaticObstacleEnv-v0"))
 obs, info = env.reset(seed=SEED)
 s0 = env.read_state()
-print(s0)
-env.step(np.zeros(2))
-s1 = env.read_state()
-print(s1)
-print(s0["lat"], s0["hdg"])
+# print(s0)
+# env.step(np.zeros(2))
+# s1 = env.read_state()
+# print(s1)
+# print(s0["lat"], s0["hdg"])
+lat0 = s0["lat"][0]
+lon0 = s0["lon"][0]
+print("aircraft:", latlon_to_xy(lat0, lon0, lat0, lon0))
+wlat = s0["wpt_lat"][0]
+wlon = s0["wpt_lon"][0]
+qx, qy = latlon_to_xy(wlat, wlon, lat0, lon0)
+test = np.sqrt(qx**2 + qy**2)
+bluesky_km = qdrdist(lat0, lon0, wlat, wlon)[1] * 1.852
+print("test:", test, "bluesky:", bluesky_km)
