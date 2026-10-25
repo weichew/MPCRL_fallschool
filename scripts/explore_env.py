@@ -98,5 +98,11 @@ from safe_rl.geometry import hdg_to_psi
 
 x0 = jnp.array([0.0, 0.0, hdg_to_psi(s0["hdg"][0])])   # aircraft at origin, its heading
 v = s0["tas"][0] / 1000                                 # m/s -> km/s
-print(circle_values(x0, N, b, J, v, 0.029, 2.0, 0.5))
-print(turning_circle_barrier(x0, N, b, J, v, 0.029, 2.0, 0.5, 2.0))
+# print(circle_values(x0, N, b, J, v, 0.029, 2.0, 0.5))
+# print(turning_circle_barrier(x0, N, b, J, v, 0.029, 2.0, 0.5, 2.0))
+
+from safe_rl.safety_filter.closed_form import closed_form_filter
+from safe_rl.params import Params
+
+p = Params()
+print(closed_form_filter(x0, 0.0, N, b, J, v, p))

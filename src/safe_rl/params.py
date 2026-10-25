@@ -20,8 +20,8 @@ class Params:
     eta: float = 2     # 2/km, smoothing of the union of B_L and B_R (eta). TODO
 
     # --- Safety filter ---
-    beta: float | None = None    # 1/s, barrier rate (beta). TODO
-    D_tol: float | None = None   # tolerance below which |D| counts as zero. TODO
+    beta: float = 0.0073     # 1/s, barrier rate (beta); omega_max / 4, as in the 18 Oct demo
+    D_tol: float = 1e-6      # |D| below this counts as zero
 
     # --- Reward ---
     sigma: float | None = None   # width of the barrier-reward term (sigma). TODO
