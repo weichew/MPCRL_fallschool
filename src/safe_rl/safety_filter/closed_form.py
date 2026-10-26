@@ -1,13 +1,16 @@
 import jax
 from safe_rl.barrier.turning_circle import turning_circle_barrier, circle_values
 from safe_rl.dynamics import f, g
+barrier_and_grad = jax.jit(jax.value_and_grad(turning_circle_barrier))
 
 def closed_form_filter(x, omega_p, N, b, J, v, p):
-    B, gradB = jax.value_and_grad(turning_circle_barrier)(x, N, b, J, v, p.omega_max, p.kappa, p.r, p.eta)
+    B, gradB = barrier_and_grad(x, N, b, J, v, p.omega_max, p.kappa, p.r, p.eta)
     LfB = gradB @ f(x, v)
     LgB = gradB @ g(x)
     A = LfB + p.beta * B
     D = LgB
+    A = float(LfB + p.beta * B)
+    D = float(LgB)
     if D > p.D_tol:                        # case 1
         lo = max(-p.omega_max, -A / D)
         hi = p.omega_max
@@ -26,6 +29,4 @@ def closed_form_filter(x, omega_p, N, b, J, v, p):
             omega = p.omega_max
         else:
             omega = -p.omega_max
-    A = float(LfB + p.beta * B)
-    D = float(LgB)
     return omega, A, D

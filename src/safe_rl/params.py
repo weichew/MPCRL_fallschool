@@ -24,9 +24,9 @@ class Params:
     D_tol: float = 1e-6      # |D| below this counts as zero
 
     # --- Reward ---
-    sigma: float | None = None   # width of the barrier-reward term (sigma). TODO
-    d_scale: float | None = None # km, distance scale of the progress term (d_scale). TODO
-    c_step: float | None = None  # cost per decision (c_step). TODO
-    w: float | None = None       # weight of the barrier reward (w). TODO
-    r_goal: float | None = None  # reward for reaching the waypoint (r_goal). TODO
-    d_goal: float | None = None  # km, distance that counts as reached (d_goal). TODO
+    sigma: float = 0.5        # width of the correction term, as a fraction of omega_max
+    d_scale: float = 10.0     # km; progress is divided by this
+    c_step: float = 0.01      # cost per decision
+    w: float = 0.2            # weight of the mean barrier reward
+    r_goal: float = 5.0       # bonus for reaching the waypoint
+    d_goal: float = 5.0       # km; reached when closer than this (BlueSky-Gym's value)
