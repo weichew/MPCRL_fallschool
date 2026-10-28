@@ -28,7 +28,8 @@ def polygon_edges(qx, qy):
     ny = dx / length
     n = np.stack([nx, ny], axis=1)       # one row (nx, ny) per edge
     b = nx * qx + ny * qy                # b_j = n_j . p_j, one per edge
-    return n, b
+    v = np.stack([qx, qy], axis=1)
+    return np.concatenate([n, v], axis=1), b
 
 
 PAD_SIZES = (8, 16, 32)
@@ -54,7 +55,7 @@ def build_obstacles(polygons, lat0, lon0):
     M, J_pad = len(edges), pad_size(J.max())
 
     # 3. arrays filled with dummy edges: n = (0, 0), b = 1000
-    N = np.zeros((M, J_pad, 2))
+    N = np.zeros((M, J_pad, 4))
     b_all = np.full((M, J_pad), 1000.0)
 
     # 4. copy each real polygon into its row; the remaining slots stay dummies

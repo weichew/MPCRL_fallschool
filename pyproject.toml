@@ -13,6 +13,7 @@ dependencies = [
     "jax>=0.10.2",
     "matplotlib>=3.11.2",
     "pytest>=9.1.1",
+    "scienceplots>=2.2.2",
     "stable-baselines3>=2.9.0",
 ]
 

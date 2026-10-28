@@ -1,7 +1,9 @@
 import jax
-from safe_rl.barrier.turning_circle import turning_circle_barrier, circle_values
 from safe_rl.dynamics import f, g
+import jax.numpy as jnp
+from safe_rl.barrier.turning_circle import turning_circle_barrier, all_pieces
 barrier_and_grad = jax.jit(jax.value_and_grad(turning_circle_barrier))
+pieces_fast = jax.jit(all_pieces)
 
 def closed_form_filter(x, omega_p, N, b, J, v, p):
     B, gradB = barrier_and_grad(x, N, b, J, v, p.omega_max, p.kappa, p.r, p.eta)
@@ -24,9 +26,14 @@ def closed_form_filter(x, omega_p, N, b, J, v, p):
     if lo <= hi: 
         omega = min(max(omega_p, lo), hi)
     else:
-        B_L, B_R = circle_values(x, N, b, J, v, p.omega_max, p.kappa, p.r)
-        if B_L >= B_R:
+        pieces = pieces_fast(x, N, b, J, v, p.omega_max, p.kappa, p.r)
+        best = int(jnp.argmax(pieces))
+        if best == 0:                  # B_L largest: turn left now
             omega = p.omega_max
-        else:
+        elif best == 1:                # B_R largest: turn right now
             omega = -p.omega_max
+        else:                          # a straight-then-turn manoeuvre is largest
+            omega = 0.0
     return omega, A, D
+
+
